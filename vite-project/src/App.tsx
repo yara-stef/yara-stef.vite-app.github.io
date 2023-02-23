@@ -1,40 +1,58 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
+import { useState, useEffect } from 'react'
 import './App.css'
 import { Button } from '@mui/material';
+import { TextField } from '@mui/material';
+import { Checkbox } from '@mui/material';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [checked, setChecked] = useState(true);
+  const [todos, setTodos] = useState([]);
+  const [todoItem, setTodoItem] = useState('');
+  const [error, setError] = useState(false);
 
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked(event.target.checked);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (todoItem) {
+      setError(false);
+      let uniqueId =
+				new Date().getTime().toString(36) + new Date().getUTCMilliseconds();
+			let newTodoItem = {
+				id: uniqueId,
+				todo: todoItem,
+				complete: false,
+      };
+      setTodos([newTodoItem, ...todos]);
+      setTodoItem('');
+    } else {
+      setError(true);
+       setTodoItem('');
+    }
+  }
+  
   return (
     <div className="App">
+      <h1>todos</h1>
+      <span>
+        <TextField fullWidth label="Add Todo..." id="fullWidth" value={todoItem} onChange={(e) => setTodoItem(e.target.value)} />
+        <Button variant="text" onClick={handleSubmit}>Submit</Button> 
+      </span>
+       <span></span>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <Checkbox
+        checked={checked}
+        onChange={handleChange}
+        inputProps={{ 'aria-label': 'controlled' }}
+        />
+        <span> { todos } </span>
+        <Button variant="text">Delete</Button>
       </div>
-      <h1>Vite + React + Typescript + MUI 5</h1>
-      <Button color="secondary">Secondary</Button>
-      <Button variant="contained" color="success">
-        Success
-      </Button>
-      <Button variant="outlined" color="error">
-        Error
-      </Button>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      
+      
+      
     </div>
   )
 }
